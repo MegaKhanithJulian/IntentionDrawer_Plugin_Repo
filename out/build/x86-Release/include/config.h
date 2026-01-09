@@ -1,0 +1,9 @@
+#define API_VERSION       "1.20"
+
+#define PLUGIN_VERSION_MAJOR 0
+#define PLUGIN_VERSION_MINOR 3
+#define PLUGIN_VERSION_PATCH 2
+#define PLUGIN_VERSION_TWEAK 0
+
+#define PKG_PRERELEASE "beta"
+#define PKG_BUILD_INFO ""

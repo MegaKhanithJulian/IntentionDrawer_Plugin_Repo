@@ -1,0 +1,20 @@
+# ninja log v6
+11	32	7896688827302816	clean	8c45b54705a541e8
+23	2837	7896688921938962	tarball-conf-stamp	6054989ec4478454
+23	2837	7896688921938962	C:/Users/jbmn0/Documents/GitHub/IntentionDrawer_Plugin_Repo/intentionDrawer_pi/out/build/x86-Release/tarball-conf-stamp	6054989ec4478454
+38	140	7896688950546740	opencpn-libs/plugin_dc/dc_utils/CMakeFiles/_DC_UTILS.dir/src/qtstylesheet.cpp.obj	d1e833a8be3505a
+27	154	7896688950360521	opencpn-libs/plugin_dc/dc_utils/CMakeFiles/_DC_UTILS.dir/src/pi_shaders.cpp.obj	6887852b36870c73
+142	4084	7896688951570213	opencpn-libs/wxJSON/CMakeFiles/WXJSON.dir/src/jsonreader.cpp.obj	c62a68eab46bade5
+155	4234	7896688951751514	opencpn-libs/wxJSON/CMakeFiles/WXJSON.dir/src/jsonval.cpp.obj	6e03f9d94b5742cf
+48	4350	7896688950546740	opencpn-libs/plugin_dc/dc_utils/CMakeFiles/_DC_UTILS.dir/src/TexFont.cpp.obj	86b962bb8b27d961
+32	4550	7896688950516619	opencpn-libs/plugin_dc/dc_utils/CMakeFiles/_DC_UTILS.dir/src/pidc.cpp.obj	9e9ac713e3560163
+4551	4679	7896688995731560	opencpn-libs/plugin_dc/dc_utils/_DC_UTILS.lib	7363efa89ad0fa16
+4088	7646	7896688991080276	opencpn-libs/wxJSON/CMakeFiles/WXJSON.dir/src/jsonwriter.cpp.obj	1e293d77f5a785d6
+7647	7723	7896689026648107	opencpn-libs/wxJSON/WXJSON.lib	d6b22f35186eed2b
+4351	7908	7896688993710261	CMakeFiles/IntentionDrawer.dir/src/preferences.cpp.obj	d5c41d072c9da635
+4235	8436	7896688992495062	CMakeFiles/IntentionDrawer.dir/src/intentionDrawer.cpp.obj	4aa5e3ed1d768b0b
+8436	9417	7896689034501993	IntentionDrawer.dll	d57f4ce2307a7ad1
+8436	9417	7896689034501993	IntentionDrawer.lib	d57f4ce2307a7ad1
+2839	12301	7896688949735237	CMakeFiles/tarball-build.util	8dcd437aa67f8ca6
+12302	12540	7896689044372182	CMakeFiles/tarball-install.util	5b1dd172974ca5d6
+12540	12702	7896689046842152	CMakeFiles/tarball-finish.util	650cd52876f5a57d

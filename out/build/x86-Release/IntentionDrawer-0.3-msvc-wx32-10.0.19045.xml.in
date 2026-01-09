@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DESKTOP-DT17BV7 - 2601091334 -->
+<plugin version="1">
+  <name>IntentionDrawer</name>
+  <version>0.3.2-beta+2601091334.77c1be6</version>
+  <release>0</release>
+  <summary>The *BEST* plugin ever. For drawing intentions.</summary>
+
+  <api-version>1.20</api-version>
+  <open-source>no</open-source>
+  <author>Garschmek the Predator of Ice (HR Studemts)</author>
+  <source>https://www.youtube.com/watch?v=dQw4w9WgXcQ</source>
+  <info-url>https://www.youtube.com/watch?v=dQw4w9WgXcQ</info-url>
+
+  <description>I mean. In theory.
+</description>
+
+  <target>msvc-wx32</target>
+  <target-version>10.0.19045</target-version>
+  <target-arch>x86</target-arch>
+</plugin>
