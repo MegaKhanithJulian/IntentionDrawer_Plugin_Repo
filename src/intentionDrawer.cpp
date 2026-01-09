@@ -130,7 +130,7 @@ wxString IntentionDrawer::GetLongDescription()
              "Copyright (c) 2025");
 }
 
-//The bitmap is typically a 32x32 pixel XPM image defined in your plugin’s resources.
+//The bitmap is typically a 32x32 pixel XPM image defined in your plugin's resources.
 wxBitmap* IntentionDrawer::GetPlugInBitmap() {
     return new wxBitmap(GOOD_PLUGIN_ICON);
 }
@@ -222,7 +222,7 @@ void translateAIS(std::string msg)
         }
     }
 
-    // Append current part’s payload
+    // Append current part's payload
     payload += parts[5];
 
     // --- Only now, check AIS type ---
@@ -402,7 +402,7 @@ void DrawWaypointDC(wxDC& dc, PlugIn_ViewPort* vp, const WP& wp)
     dc.DrawLine(p, tip);
 
     // Arrowhead
-    double arrowAngle = PI / 8; // 22.5°
+    double arrowAngle = PI / 8; // 22.5 degrees
     double arrowLen = 6.0;
     wxPoint left(tip.x - arrowLen * sin(rad - arrowAngle),
         tip.y + arrowLen * cos(rad - arrowAngle));
