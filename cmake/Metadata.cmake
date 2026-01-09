@@ -83,6 +83,31 @@ endif()
 # pkg_build_info: Info about build host (link to log if available).
 set(pkg_build_info ${_pkg_build_info})
 
+# pkg_repo: Repository to use for upload
+if ("${_git_tag}" STREQUAL "")
+  set(pkg_repo "$ENV{CLOUDSMITH_UNSTABLE_REPO}")
+  if ("${pkg_repo}" STREQUAL "")
+    set(pkg_repo ${OCPN_TEST_REPO})
+  endif ()
+else ()
+  string(TOLOWER  ${_git_tag}  _lc_git_tag)
+  if (_lc_git_tag MATCHES "beta|rc")
+    set(pkg_repo "$ENV{CLOUDSMITH_BETA_REPO}")
+    if ("${pkg_repo}" STREQUAL "")
+      set(pkg_repo ${OCPN_BETA_REPO})
+    endif ()
+  else ()
+    set(pkg_repo "$ENV{CLOUDSMITH_STABLE_REPO}")
+    if ("${pkg_repo}" STREQUAL "")
+      set(pkg_repo ${OCPN_RELEASE_REPO})
+    endif ()
+  endif()
+endif ()
+
+# Make sure repo is displayed even if builders hides environment variables.
+string(REGEX REPLACE "([a-zA-Z0-9/-])" "\\1 " pkg_repo_display  ${pkg_repo})
+message(STATUS "Selected upload repository: ${pkg_repo_display}")
+
 # pkg_semver: Complete version including pre-release tag and build info
 # for untagged builds.
 set(_pre_rel ${PKG_PRERELEASE})
@@ -124,6 +149,13 @@ string(CONCAT pkg_tarname
   "_${plugin_target}-${plugin_target_version}-${_pkg_arch}"
 )
 
+# pkg_tarball_url: Tarball location at cloudsmith
+string(CONCAT pkg_tarball_url
+  "https://dl.cloudsmith.io/public/${pkg_repo}/raw"
+  "/names/${pkg_displayname}-tarball/versions/${pkg_semver}"
+  "/${pkg_tarname}.tar.gz"
+)
+
 # pkg_python: python command
 find_program(PY_WRAPPER py) # (at least) appveyor build machines
 find_program(PYTHON3 python3)
@@ -134,5 +166,8 @@ elseif (PYTHON3)
 else ()
   set(pkg_python python)
 endif ()
+
+# pkg_vers_build_info: Semantic version build info part.
+set(pkg_vers_build_info "${_build_id}.${_gitversion}")
 
 # cmake-format: on
