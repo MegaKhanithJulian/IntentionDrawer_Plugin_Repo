@@ -6,6 +6,14 @@
 #include <sstream>
 #include <iostream>
 
+extern "C" DECL_EXP opencpn_plugin* create_pi(void* ppimgr)
+{
+    return static_cast<opencpn_plugin*>(
+        new IntentionDrawer(ppimgr));
+}
+
+extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p) { delete p; }
+
 // Constructor
 IntentionDrawer::IntentionDrawer(void* mgr) : opencpn_plugin_120(mgr)
 {
@@ -464,9 +472,4 @@ void AddOrUpdateVessel(const std::string& mmsi, const std::vector<WP>& route, wx
 void IntentionDrawer::SetAISSentence(wxString& sentence)
 {
     translateAIS(sentence.ToStdString());
-}
-
-extern "C" DECL_EXP opencpn_plugin* create_pi(void* ppimgr)
-{
-    return new IntentionDrawer(ppimgr);
 }
