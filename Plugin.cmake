@@ -12,7 +12,7 @@
 #
 # -------  Plugin setup --------
 #
-set(PKG_NAME IntentionDrawer)
+set(PKG_NAME IntentionDrawer_pi)
 set(PKG_VERSION "0.3.2")
 set(PKG_PRERELEASE "beta") # Empty, or a tag like 'beta'
 
