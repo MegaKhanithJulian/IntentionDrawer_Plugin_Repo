@@ -9,11 +9,24 @@
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
 
+# -------- Options ----------
+
+set(OCPN_TEST_REPO
+    "private/opencpn-plugins"
+    CACHE STRING "Default repository for untagged builds")
+set(OCPN_BETA_REPO
+    "private/intentiondrawer_pi-beta"
+    CACHE STRING "Default repository for tagged builds matching 'beta'")
+set(OCPN_RELEASE_REPO
+    "private/intentiondrawer_pi-stable"
+    CACHE STRING "Default repository for tagged builds not matching 'beta'")
+
+
 #
 # -------  Plugin setup --------
 #
-set(PKG_NAME IntentionDrawer)
-set(PKG_VERSION "0.3.2")
+set(PKG_NAME IntentionDrawer_pi)
+set(PKG_VERSION "0.1.0")
 set(PKG_PRERELEASE "beta") # Empty, or a tag like 'beta'
 
 set(DISPLAY_NAME IMAGENIUS) # Dialogs, installer artifacts, ...
@@ -37,21 +50,14 @@ if(NOT "${SANITIZE}" STREQUAL "OFF" AND NOT "${SANITIZE}" STREQUAL "")
   add_link_options(-fsanitize=${SANITIZE} -fno-omit-frame-pointer)
 endif()
 
-add_definitions(-DDASHBOARDSK_USE_SVG)
 add_definitions(-DocpnUSE_GL)
 
+set(SRC ${CMAKE_SOURCE_DIR}/src/intentionDrawer.cpp
+        ${CMAKE_SOURCE_DIR}/src/preferences.cpp
+)
+
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
-
-set(SRC_GUI_DESKTOP ${CMAKE_SOURCE_DIR}/src/dashboardskgui.cpp
-                    ${CMAKE_SOURCE_DIR}/src/dashboardskguiimpl.cpp)
-set(SRC_GUI_ANDROID ${CMAKE_SOURCE_DIR}/src/dashboardskguiandroid.cpp
-                    ${CMAKE_SOURCE_DIR}/src/dashboardskguiimpl.cpp)
-
-if(QT_ANDROID)
-  set(SRC_GUI ${SRC_GUI_ANDROID})
-else()
-  set(SRC_GUI ${SRC_GUI_DESKTOP})
-endif()
 
 set(PKG_API_LIB api-20) # A dir in opencpn-libs/ e. g., api-17 or api-16
 
@@ -85,8 +91,6 @@ macro(add_plugin_libraries)
   add_subdirectory("${CMAKE_SOURCE_DIR}/opencpn-libs/plugin_dc")
   target_link_libraries(${PACKAGE_NAME} ocpn::plugin-dc)
 
-  add_subdirectory("opencpn-libs/wxJSON")
-  target_link_libraries(${PACKAGE_NAME} ocpn::wxjson)
   if(${WITH_TESTS})
     include(CTest)
     add_subdirectory("${CMAKE_SOURCE_DIR}/tests")

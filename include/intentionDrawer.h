@@ -1,8 +1,13 @@
 #ifndef _INTENTIONDRAWER_H_
 #define _INTENTIONDRAWER_H_
 
+#include "wx/wxprec.h"
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif  // precompiled headers
+
 #include "ocpn_plugin.h" // API 20 unified header
-#include <wx/string.h>
 
 class AIS_Target_Data;
 

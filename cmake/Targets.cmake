@@ -66,6 +66,24 @@ else()
   set(_rmdir_cmd "rm -rf")
 endif()
 
+# Cmake batch file to compute and patch metadata checksum
+#
+set(_cs_script
+    "
+  execute_process(
+    COMMAND  cmake -E sha256sum ${CMAKE_BINARY_DIR}/${pkg_tarname}.tar.gz
+    OUTPUT_FILE ${CMAKE_BINARY_DIR}/${pkg_tarname}.sha256
+  )
+  file(READ ${CMAKE_BINARY_DIR}/${pkg_tarname}.sha256 _SHA256)
+  string(REGEX MATCH \"^[^ ]*\" checksum \${_SHA256} )
+  configure_file(
+    ${CMAKE_BINARY_DIR}/${pkg_displayname}.xml.in
+    ${CMAKE_BINARY_DIR}/${pkg_xmlname}.xml
+    @ONLY
+  )
+")
+file(WRITE "${CMAKE_BINARY_DIR}/checksum.cmake" ${_cs_script})
+
 function(create_finish_script)
   set(_finish_script
       "
@@ -82,6 +100,9 @@ function(create_finish_script)
         tar -czf ../${pkg_tarname}.tar.gz --format=gnutar ${pkg_displayname}
     )
     message(STATUS \"Creating tarball ${pkg_tarname}.tar.gz\")
+
+    execute_process(COMMAND cmake -P ${CMAKE_BINARY_DIR}/checksum.cmake)
+    message(STATUS \"Computing checksum in ${pkg_xmlname}.xml\")
   ")
   file(WRITE "${CMAKE_BINARY_DIR}/finish_tarball.cmake" "${_finish_script}")
 endfunction()
@@ -196,6 +217,10 @@ function(flatpak_target manifest)
     if (NOT EXISTS app/files/lib/opencpn/lib${PACKAGE_NAME}.so)
       message(FATAL_ERROR \"Cannot find generated file lib${PACKAGE_NAME}.so\")
     endif ()
+    execute_process(
+      COMMAND bash -c \"sed -e '/@checksum@/d' \
+          < ${pkg_xmlname}.xml.in > app/files/metadata.xml\"
+    )
     if (${CMAKE_BUILD_TYPE} MATCHES Release|MinSizeRel)
       message(STATUS \"Stripping app/files/lib/opencpn/lib${PACKAGE_NAME}.so\")
       execute_process(
@@ -213,6 +238,10 @@ function(flatpak_target manifest)
         tar -czf ../${pkg_tarname}.tar.gz --format=gnutar ${pkg_displayname}
     )
     message(STATUS \"Building ${pkg_tarname}.tar.gz\")
+    execute_process(
+      COMMAND cmake -P ${CMAKE_BINARY_DIR}/checksum.cmake
+    )
+    message(STATUS \"Computing checksum in ${pkg_xmlname}.xml\")
   ")
   file(WRITE "${CMAKE_BINARY_DIR}/build_flatpak.cmake" ${_fp_script})
   add_custom_target(flatpak)

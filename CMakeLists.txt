@@ -39,10 +39,7 @@ if(NOT WIN32
   add_compile_options(-msse4.2 -maes)
 endif()
 
-add_library(${CMAKE_PROJECT_NAME} SHARED EXCLUDE_FROM_ALL
-src/intentionDrawer.cpp
-src/preferences.cpp
-)
+add_library(${CMAKE_PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC})
 include_directories(BEFORE ${CMAKE_BINARY_DIR}/include)
 
 add_subdirectory("opencpn-libs/${PKG_API_LIB}")
@@ -109,6 +106,13 @@ endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in
                ${CMAKE_BINARY_DIR}/include//config.h @ONLY)
+
+configure_file(
+  # The cloudsmith upload script
+  ${CMAKE_SOURCE_DIR}/ci/upload.sh.in ${CMAKE_BINARY_DIR}/upload.sh @ONLY)
+configure_file(
+  # The cloudsmith upload script, windows bat file.
+  ${CMAKE_SOURCE_DIR}/ci/upload.bat.in ${CMAKE_BINARY_DIR}/upload.bat @ONLY)
 
 set(FILE_CHECKSUM "@checksum@")
 configure_file(
