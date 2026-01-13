@@ -9,19 +9,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ],
-      "variables": [
-        {
-          "name": "wxWidgets_ROOT_DIR",
-          "value": "${projectDir}/include/wxWidgets-3.2.8",
-          "type": "PATH"
-        },
-        {
-          "name": "wxWidgets_INCLUDE_DIRS",
-          "value": "${projectDir}/include/wxWidgets-3.2.8/lib",
-          "type": "PATH"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x86" ]
     }
   ]
 }

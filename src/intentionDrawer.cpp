@@ -9,7 +9,7 @@
 extern "C" DECL_EXP opencpn_plugin* create_pi(void* ppimgr)
 {
     return static_cast<opencpn_plugin*>(
-        new IntentionDrawer(ppimgr));
+        new IntentionDrawer(ppimgr));   
 }
 
 extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p) { delete p; }
@@ -21,6 +21,7 @@ IntentionDrawer::IntentionDrawer(void* mgr) : opencpn_plugin_120(mgr)
 }
 
 //WARNING: the plugin does NOT WORK with OpenGL rendering. we only use DC renderer.
+//or does it? i dont know.
 
 #define PI 3.14159265358979323846
 
@@ -59,7 +60,7 @@ struct Vessel {
 void DrawGiantTestLine(wxDC& dc, PlugIn_ViewPort* vp)
 {
     // Set a thick, bright pen
-    dc.SetPen(wxPen(*wxRED, 15)); // 15 pixels thick, bright red
+    dc.SetPen(wxPen(*wxRED, 150)); // 150 pixels thick, bright red
 
     // Draw from top-left to bottom-right of the viewport
     wxPoint start(0, 0);
@@ -107,12 +108,11 @@ bool IntentionDrawer::DeInit(void) {
 
 int IntentionDrawer::GetAPIVersionMajor() { return API_VERSION_MAJOR; }
 int IntentionDrawer::GetAPIVersionMinor() { return API_VERSION_MINOR; }
-//version x.x (example: 1.0)
+//version x.x (example: 0.1)
 int IntentionDrawer::GetPlugInVersionMajor() { return 0; } // Your plugin's major version
 int IntentionDrawer::GetPlugInVersionMinor() { return 1; } // minor version
 
-//on one hand, maybe not necessary since we don't intend to publicize this plugin
-//on the other, they *are* marked as required. im implementing them just to be sure
+//necessary for display of the plugin in the plugin manager that we use to plug in the plugin in a way thats managed by the OpenCPN plugin manager
 wxString IntentionDrawer::GetCommonName() { return _("IntentionDrawer"); }
 
 wxString IntentionDrawer::GetShortDescription() {
@@ -121,11 +121,13 @@ wxString IntentionDrawer::GetShortDescription() {
 
 wxString IntentionDrawer::GetLongDescription()
 {
-    return _("A detailed description of my plugin.\n\n"
-             "* Feature 1\n"
-             "* Feature 2\n"
-             "* Feature 3\n\n"
-             "Version: 0.1\n"
+    return _("The functionalities are as follow:\n\n"
+
+             "* Toggle for local AIS intentions to be received and displayed (NOT DONE)\n"
+             "* Toggle for custom online webserver intentions to be received and displayed (NOT DONE)\n"
+             "* Draws a really big line somewhere (?)\n\n"
+
+             "Version: 0.1.003\n"
              "Author: the lion does not concern himself with names\n"
              "Copyright (c) 2025");
 }
