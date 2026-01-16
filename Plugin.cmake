@@ -53,7 +53,6 @@ endif()
 add_definitions(-DocpnUSE_GL)
 
 set(SRC ${CMAKE_SOURCE_DIR}/src/intentionDrawer.cpp
-        ${CMAKE_SOURCE_DIR}/src/preferences.cpp
 )
 
 

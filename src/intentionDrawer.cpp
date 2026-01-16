@@ -1,10 +1,15 @@
 #include "intentionDrawer.h"
 #include <wx/wx.h>
-#include <vector>
-#include <cmath>
-#include <string>
-#include <sstream>
-#include <iostream>
+
+#ifdef __WXMSW__
+#include <windows.h>
+#include <GL/gl.h>
+#elif defined(__WXGTK__)
+#include <GL/gl.h>
+#elif defined(__WXOSX__)
+#include <OpenGL/gl.h>
+#endif
+
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void* ppimgr)
 {
@@ -21,7 +26,7 @@ IntentionDrawer::IntentionDrawer(void* mgr) : opencpn_plugin_120(mgr)
 }
 
 //WARNING: the plugin does NOT WORK with OpenGL rendering. we only use DC renderer.
-//or does it? i dont know.
+//or does it? i dont know. i can't know, it doesnt work at all.
 
 #define PI 3.14159265358979323846
 
@@ -309,7 +314,7 @@ static char* iconArray[] = {
 int IntentionDrawer::Init(void) {
     //i dont even fucking know what to initialise
 
-    return WANTS_OVERLAY_CALLBACK;
+    return WANTS_OVERLAY_CALLBACK | WANTS_OPENGL_OVERLAY_CALLBACK | WANTS_DYNAMIC_OPENGL_OVERLAY_CALLBACK;
 }
 bool IntentionDrawer::DeInit(void) {
     //i dont even fucking know what to uninitialise
@@ -354,9 +359,43 @@ wxBitmap* IntentionDrawer::GetPlugInBitmap() {
 //this is the place to be
 
 //do not call. automatically called by opencpn every frame
-bool IntentionDrawer::RenderOverlay(wxDC& dc, PlugIn_ViewPort* vp) {
+bool IntentionDrawer::RenderOverlay(wxDC& dc, PlugIn_ViewPort* vp)
+{
+    if (!vp) return false;
+    dc.SetPen(wxPen(*wxRED, 5));
+    dc.DrawLine(0, 0, vp->pix_width, vp->pix_height);
+    return true;
+}
+bool IntentionDrawer::RenderOverlayMultiCanvas(wxDC& dc, PlugIn_ViewPort* vp, int canvasIndex, int priority) {
     // Draw on the chart
     dc.SetPen(wxPen(*wxRED, 2));
     dc.DrawLine(0, 0, vp->pix_width, vp->pix_height);
     return true;
+}
+bool IntentionDrawer::RenderGLOverlayMultiCanvas(wxGLContext* pcontext, PlugIn_ViewPort* vp, int canvasIndex, int priority) {
+    if (!vp || !pcontext)
+        return false;
+
+    // Only draw for main overlay priority (adjust if needed)
+    if (priority != OVERLAY_OVER_EMBOSS)
+        return false;
+
+    glPushMatrix();
+    glLoadIdentity();
+
+    // Make the line very thick
+    glLineWidth(10.0f);
+
+    // Red color
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f, -1.0f); // bottom-left of viewport
+    glVertex2f(1.0f, 1.0f);   // top-right of viewport
+    glEnd();
+
+    glPopMatrix();
+    glFlush();
+
+    return true; // tell OpenCPN we drew something
 }

@@ -18,7 +18,7 @@ class AIS_Target_Data;
 class IntentionDrawer : public opencpn_plugin_120 {
 public:
     IntentionDrawer(void* mgr);
-    virtual ~IntentionDrawer() {}
+    ~IntentionDrawer() {}
 
     //standard required functions
     int Init() override;
@@ -29,7 +29,7 @@ public:
     int GetPlugInVersionMinor() override;
     wxBitmap* GetPlugInBitmap() override;   //this ones for the XPM plugin icon
 
-    //functions for the plugin manager thing
+    //required functions for the plugin manager thing
     wxString GetCommonName() override;
     wxString GetShortDescription() override;
     wxString GetLongDescription() override;
@@ -37,7 +37,8 @@ public:
     //optionele functie
     //void SetAISSentence(wxString& sentence) override;
     bool RenderOverlay(wxDC& dc, PlugIn_ViewPort* vp) override;
-
+    bool RenderOverlayMultiCanvas(wxDC& dc, PlugIn_ViewPort* vp, int canvasIndex, int priority) override;
+    bool RenderGLOverlayMultiCanvas(wxGLContext* pcontext, PlugIn_ViewPort* vp, int canvasIndex, int priority) override;
 private:
     //wxString m_lastAISSentence;
 
