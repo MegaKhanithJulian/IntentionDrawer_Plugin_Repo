@@ -27,19 +27,19 @@ public:
     int GetAPIVersionMinor() override;
     int GetPlugInVersionMajor() override;
     int GetPlugInVersionMinor() override;
-    wxBitmap* GetPlugInBitmap() override;   //this ones for the plugin icon so maybe redundant
+    wxBitmap* GetPlugInBitmap() override;   //this ones for the XPM plugin icon
 
-    //functions for the plugin manager thing so technically we dont need to do these
+    //functions for the plugin manager thing
     wxString GetCommonName() override;
     wxString GetShortDescription() override;
     wxString GetLongDescription() override;
 
     //optionele functie
-    void SetAISSentence(wxString& sentence) override;
-    bool RenderOverlayMultiCanvas(wxDC& dc, PlugIn_ViewPort* vp, int canvasIndex) override;
+    //void SetAISSentence(wxString& sentence) override;
+    bool RenderOverlay(wxDC& dc, PlugIn_ViewPort* vp) override;
 
 private:
-    wxString m_lastAISSentence;
+    //wxString m_lastAISSentence;
 
     // example: store last MMSI received
     // int m_lastMMSI = 0;

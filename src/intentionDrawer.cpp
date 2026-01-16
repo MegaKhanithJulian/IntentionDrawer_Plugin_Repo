@@ -9,7 +9,7 @@
 extern "C" DECL_EXP opencpn_plugin* create_pi(void* ppimgr)
 {
     return static_cast<opencpn_plugin*>(
-        new IntentionDrawer(ppimgr));   
+        new IntentionDrawer(ppimgr));
 }
 
 extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p) { delete p; }
@@ -17,7 +17,7 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p) { delete p; }
 // Constructor
 IntentionDrawer::IntentionDrawer(void* mgr) : opencpn_plugin_120(mgr)
 {
-    m_lastAISSentence = "";
+    //m_lastAISSentence = "";
 }
 
 //WARNING: the plugin does NOT WORK with OpenGL rendering. we only use DC renderer.
@@ -26,84 +26,295 @@ IntentionDrawer::IntentionDrawer(void* mgr) : opencpn_plugin_120(mgr)
 #define PI 3.14159265358979323846
 
 //didnt test, dont know how to test, so itll be fine. (i hope?)
-#define GOOD_PLUGIN_ICON "images/veryGoodIcon.XPM"
-
-// Waypoint struct
-struct WP {
-    WP(double longitude, double latitude, int headng, int h, int m, int s) {
-        lon = longitude;
-        lat = latitude;
-        heading = headng;
-        hour = h;
-        minute = m;
-        second = s;
-
-        eta = wxString::Format("%02d:%02d:%02d", h, m, s);
-    }
-
-    double lon;
-    double lat;
-    int heading;
-    int hour;
-    int minute;
-    int second;
-    wxString eta;
+/* XPM */
+static char* iconArray[] = {
+    /* columns rows colors chars-per-pixel */
+    "32 32 240 2 ",
+    "   c #262628",
+    ".  c #353435",
+    "X  c #383738",
+    "o  c #551C01",
+    "O  c #5B1D03",
+    "+  c #5D2205",
+    "@  c #622304",
+    "#  c #692604",
+    "$  c #6D2A05",
+    "%  c #632A0B",
+    "&  c #6D2A08",
+    "*  c #732D06",
+    "=  c #782F07",
+    "-  c #752E09",
+    ";  c #753005",
+    ":  c #7D3506",
+    ">  c #75310A",
+    ",  c #7A320A",
+    "<  c #7E3B0D",
+    "1  c #743210",
+    "2  c #474648",
+    "3  c #49494B",
+    "4  c #575759",
+    "5  c #615951",
+    "6  c #5C5F63",
+    "7  c #706E6D",
+    "8  c #727275",
+    "9  c #787575",
+    "0  c #853805",
+    "q  c #81360A",
+    "w  c #843B0D",
+    "e  c #8A3E0A",
+    "r  c #833811",
+    "t  c #83410F",
+    "y  c #8C410C",
+    "u  c #92440E",
+    "i  c #994709",
+    "p  c #954B0E",
+    "a  c #9F550E",
+    "s  c #8C4213",
+    "d  c #914413",
+    "f  c #954916",
+    "g  c #9B4C15",
+    "h  c #9C521A",
+    "j  c #A94C0E",
+    "k  c #A4550B",
+    "l  c #A55B0C",
+    "z  c #B2530A",
+    "x  c #B85309",
+    "c  c #A45514",
+    "v  c #A35913",
+    "b  c #AD5A13",
+    "n  c #AA5816",
+    "m  c #B35D14",
+    "M  c #B85917",
+    "N  c #BC5C1A",
+    "B  c #AD600F",
+    "V  c #B36111",
+    "C  c #BC631E",
+    "Z  c #BA7113",
+    "A  c #BC6520",
+    "S  c #B1702B",
+    "D  c #C5550B",
+    "F  c #C65C0D",
+    "G  c #CB5B0A",
+    "H  c #D45E0A",
+    "J  c #C15B16",
+    "K  c #CE610E",
+    "L  c #D7680E",
+    "P  c #DA700F",
+    "I  c #C2641C",
+    "U  c #C86319",
+    "Y  c #C5691E",
+    "T  c #CA6C1D",
+    "R  c #CF7614",
+    "E  c #CB741D",
+    "W  c #D7751A",
+    "Q  c #E37519",
+    "!  c #C46B20",
+    "~  c #C66A20",
+    "^  c #D26F21",
+    "/  c #CC7323",
+    "(  c #CB7727",
+    ")  c #D37522",
+    "_  c #D37B23",
+    "`  c #D87826",
+    "'  c #DB7C24",
+    "]  c #D57C2C",
+    "[  c #C67B32",
+    "{  c #D37E32",
+    "}  c #E47D26",
+    "|  c #DD8125",
+    " . c #DA842B",
+    ".. c #D18928",
+    "X. c #DB8B29",
+    "o. c #CF8B37",
+    "O. c #DB8B32",
+    "+. c #D88838",
+    "@. c #DE9639",
+    "#. c #E38425",
+    "$. c #EA8527",
+    "%. c #E68A26",
+    "&. c #EC8D24",
+    "*. c #E3812A",
+    "=. c #E58B2C",
+    "-. c #E98D29",
+    ";. c #F08E27",
+    ":. c #ED9329",
+    ">. c #EC932C",
+    ",. c #F1972F",
+    "<. c #E48D33",
+    "1. c #E18C3B",
+    "2. c #E59134",
+    "3. c #EB9533",
+    "4. c #ED9935",
+    "5. c #E4923C",
+    "6. c #E5993A",
+    "7. c #EC9B3B",
+    "8. c #F29C33",
+    "9. c #F39937",
+    "0. c #EAA73C",
+    "q. c #F4A133",
+    "w. c #F4A23D",
+    "e. c #8E8270",
+    "r. c #DA8D42",
+    "t. c #DC9144",
+    "y. c #DB974A",
+    "u. c #DD9C53",
+    "i. c #E98F42",
+    "p. c #E29343",
+    "a. c #E59C45",
+    "s. c #EA9B44",
+    "d. c #E99749",
+    "f. c #E49D4D",
+    "g. c #E29D53",
+    "h. c #E89A58",
+    "j. c #EAA044",
+    "k. c #EAA249",
+    "l. c #E2AB4C",
+    "z. c #F4A444",
+    "x. c #F7A748",
+    "c. c #E5A652",
+    "v. c #E9A854",
+    "b. c #E2A35A",
+    "n. c #E6AC5C",
+    "m. c #EBAA5B",
+    "M. c #F2A15B",
+    "N. c #EFB451",
+    "B. c #EBB557",
+    "V. c #E3A260",
+    "C. c #E7A965",
+    "Z. c #E4AD6A",
+    "A. c #EBB361",
+    "S. c #E9B56B",
+    "D. c #E9B869",
+    "F. c #F1B666",
+    "G. c #EFAB70",
+    "H. c #E8B776",
+    "J. c #EEB474",
+    "K. c #E6BC7D",
+    "L. c #F2BD74",
+    "P. c #F2BC7C",
+    "I. c #EEC467",
+    "U. c #EEC876",
+    "Y. c #ECC37C",
+    "T. c #F2C17A",
+    "R. c #F4D87C",
+    "E. c #908F91",
+    "W. c #A7A5A9",
+    "Q. c #B1AEB0",
+    "!. c #B6B7BD",
+    "~. c #EAB985",
+    "^. c #F6B886",
+    "/. c #EFBB94",
+    "(. c #D4BAA3",
+    "). c #C2BEBF",
+    "_. c #EDC285",
+    "`. c #E6C38D",
+    "'. c #ECC48D",
+    "]. c #F2C484",
+    "[. c #F1C58C",
+    "{. c #F4CA8D",
+    "}. c #F2D588",
+    "|. c #ECC692",
+    " X c #EAC994",
+    ".X c #EDCB9C",
+    "XX c #F3C493",
+    "oX c #F8C295",
+    "OX c #F1CA93",
+    "+X c #F1CE9B",
+    "@X c #EFD19C",
+    "#X c #F4D695",
+    "$X c #F3D29C",
+    "%X c #CAC2BD",
+    "&X c #ECC8A3",
+    "*X c #EDCDA4",
+    "=X c #F5CDA5",
+    "-X c #EFD1A1",
+    ";X c #EED2AE",
+    ":X c #F2D2A4",
+    ">X c #F9D3A4",
+    ",X c #F2D4AB",
+    "<X c #EFD6B5",
+    "1X c #EFD9B8",
+    "2X c #F1D6B1",
+    "3X c #F3D8B6",
+    "4X c #F2DABC",
+    "5X c #F9D9B9",
+    "6X c #F6E1AE",
+    "7X c #F8E3B4",
+    "8X c #F7E4BD",
+    "9X c #BEBFC5",
+    "0X c #CBC7C8",
+    "qX c #CECED3",
+    "wX c #D1CED1",
+    "eX c #D9D6D8",
+    "rX c #F2DCC3",
+    "tX c #F7DECB",
+    "yX c #E2DEDF",
+    "uX c #E5E0CE",
+    "iX c #F8E7C5",
+    "pX c #F4E1CA",
+    "aX c #FAF1CF",
+    "sX c #F9E8D7",
+    "dX c #F9F3DE",
+    "fX c #DDDCE1",
+    "gX c #E6E5E7",
+    "hX c #EBE9EE",
+    "jX c #FBEDE2",
+    "kX c #F6EEEC",
+    "lX c #FAF3E2",
+    "zX c #FAF5EC",
+    "xX c #FBF8EF",
+    "cX c #EFEEF3",
+    "vX c #F1EFF3",
+    "bX c #F6F4F5",
+    "nX c #FBF6F4",
+    "mX c #F6F5FA",
+    "MX c #FAF7FB",
+    "NX c #FBF9FD",
+    /* pixels */
+    "K.|.,X3X4XrX4X2X-X XY.S.n.c.c.c.c.c.n.H._..X,X3XrXrXpXpXrX1X*X~.",
+    ".X*X,X2X1X1X3X2X,X:X+X[.].].].].].[.OX+X,X2X3X4XrXtXtXrX4X1X<X*X",
+    " X.X*X*X-X,X,X,X,X,X,X:X+X$X:X:X:X:X:X,X3X3X3X4XrXrX4X1X<X;X*X&X",
+    "`.'.'.'.'.|.XX|.OX'.'._._._._._._._._._.'.|. X.X.X*X*X*X*X*X&X&X",
+    "K.H.H.S.Z.C.C.m.m.v.k.k.k.k.k.k.k.k.k.a.a.a.a.f.g.b.b.C.Z.H.~.~.",
+    "Z.V.b.g.f.f.f.a.s.7.7.7.7.7.7.4.4.4.3.3.2.=.=.=.=.O.O.+.+.+.r.y.",
+    "u.u.y.t.p.p.i.7.7.7.4.4.8.8.8.,.,.,.3.>.>.-.%.#.#.*.' ' ] ] ] { ",
+    "t.t.r.@.1.<.2.3.4.4.4.8.8.q.q.q.8.8.8.,.:.>.-.%.%.*.' ` ` ) / / ",
+    "r.t.p.1.} ` W W $.$.$.;.,.9.z.x.x.z.w.8.:.&.%.#.#.} ' ` ) ) / / ",
+    "t.+./ U D D G H L Q } i.G.^.oXoXoXoX^.M.i.*.Q P L K F D M J J I ",
+    "S.h.{ U G K L P } d.^.(.%XnXMXMXyX0XkXjXtX/.h.*.W K G D x z V [ ",
+    "'.[.T.m.5.5.s.M.G.5XnXE.6 mXNXNXW.3 hXNXNXnXtX~.d.p.p.g.b.Z.~.OX",
+    "K.K.L.L.T.T.{.>XsXnXnXgXgXNXNXNXhXfXMXNXNXNXMXjX3X>X>X:X:X-X-X.X",
+    "b.A.A.B.F.L.].8XzXlXdXxXbXeXmXNXNXMXgXNXNXNXNXMXjX4X:XOXOX{.'._.",
+    "C ( ]  .2.k.L.aXdXiX8XuX6 3 hXNXNXeX3 E.mXNXMXMXzXrX~.n.c.y.o.[ ",
+    "M J Y ^ ' =.J.aX8X7X,Xe.3 qXMXvXhXbXQ.X 9XNXMXMXlXiXV.O.E T C M ",
+    "M I T ) ' =.L.aX7X6X:X5 W.NXNX).8 NXNX7 E.NXNXMXzXsXC.+._ E Y N ",
+    "N I T ) ' <.P.lXlXdXlX7 8 mXNXE.  !.wX2 !.NXNXMXnXpXC.O._ E ~ C ",
+    "N I T W | 5.J.sXMXMXNXwX. 4 4 . 9 .   7 cXNXNXNXkX&Xg.O._ E ~ C ",
+    "N Y T _ | <.f.~.rXjXnXMX0X9 7 !.MXwX0XkXnXzXdXrX/.V.@. ._ / Y C ",
+    "I Y / ) ' #.=.s.M.J.[.=X>X5XzXlXrXtX5XXX[.P.G.v.s.2.X._ _ / ~ C ",
+    "C Y ~ ) _ | %.-.>.4.7.7.z.$XdX@Xb.Z.#Xz.8.4.3.>.%.#.| _ / ~ ~ C ",
+    "C Y ~ / ) ' | %.-.&.&.&.w.$X6X#XU.U.#Xw.;.&.&.%.=. .' _ / ~ C C ",
+    "A A ~ /  .v.n.A.A.v.B.F.B.D.}.R.I.N.U.F.7.4.j.A.S.Y.I.B.l.( C C ",
+    "C ~ /  .X.t.S n g h o.Y.D.@.0.6...X.0.B.}.}.U.6.+.I.v.( b j ~ A ",
+    "C / ~ a u y : $ O u R Z l k l i i z z E l.I.N.X.o...j 0 $ , q s ",
+    "m b y < w r r - r n B k l a p t i k p m R R E m p y w , % + + 1 ",
+    "d d s s s d d d g c k v v v v c v k c b V V m m n c c g g f f d ",
+    ", , , , , , , q e e y y y y y s d u y u p p p p u y y w w w w w ",
+    "& & & & & & - - : q q : : q q q q w q w e e e e 0 : ; - ; > > > ",
+    "@ @ @ @ @ @ # * - - ; - - , , - > , = : q q q : , , * & $ & $ & ",
+    "o o O O O + @ @ # & & & * $ $ # # $ - - = , ; - * & $ # # # @ @ "
 };
 
-struct Vessel {
-    std::string mmsi; // unique vessel identifier
-    std::vector<WP> route; // vessel-specific waypoints
-    wxColour color; // optional: each vessel can have a distinct color
-};
-
-// Draws a giant fat line across the visible map, independent of vessels
-void DrawGiantTestLine(wxDC& dc, PlugIn_ViewPort* vp)
-{
-    // Set a thick, bright pen
-    dc.SetPen(wxPen(*wxRED, 150)); // 150 pixels thick, bright red
-
-    // Draw from top-left to bottom-right of the viewport
-    wxPoint start(0, 0);
-    wxPoint end(vp->pix_width, vp->pix_height);
-
-    dc.DrawLine(start, end);
-}
-
-Vessel createSampleVessel()
-{
-    Vessel vessel;
-    vessel.mmsi = "123456789"; // unique vessel ID
-    vessel.color = wxColour(255, 0, 0); // red vessel
-
-    // Base point
-    double baseLat = 51.91185489189016;
-    double baseLon = 4.486495169805941;
-
-    // Add waypoints around the base point
-    vessel.route.push_back(WP(baseLon + 0.001, baseLat + 0.001, 90, 10, 30, 0));
-    vessel.route.push_back(WP(baseLon + 0.002, baseLat + 0.002, 95, 10, 40, 0));
-    vessel.route.push_back(
-        WP(baseLon + 0.003, baseLat + 0.0015, 100, 10, 50, 0));
-    vessel.route.push_back(
-        WP(baseLon + 0.004, baseLat + 0.0025, 110, 11, 0, 0));
-    vessel.route.push_back(
-        WP(baseLon + 0.005, baseLat + 0.003, 120, 11, 10, 0));
-
-    return vessel;
-}
-
-std::vector<Vessel> vessels; // all vessels currently tracked
 
 int IntentionDrawer::Init(void) {
-	//i dont even fucking know what to initialise
-    vessels.push_back(createSampleVessel());
+    //i dont even fucking know what to initialise
 
-	return WANTS_NMEA_SENTENCES | WANTS_OVERLAY_CALLBACK;
+    return WANTS_OVERLAY_CALLBACK;
 }
 bool IntentionDrawer::DeInit(void) {
-	//i dont even fucking know what to uninitialise
+    //i dont even fucking know what to uninitialise
 
-	return true;
+    return true;
 }
 
 int IntentionDrawer::GetAPIVersionMajor() { return API_VERSION_MAJOR; }
@@ -123,18 +334,18 @@ wxString IntentionDrawer::GetLongDescription()
 {
     return _("The functionalities are as follow:\n\n"
 
-             "* Toggle for local AIS intentions to be received and displayed (NOT DONE)\n"
-             "* Toggle for custom online webserver intentions to be received and displayed (NOT DONE)\n"
-             "* Draws a really big line somewhere (?)\n\n"
+        "* Toggle for local AIS intentions to be received and displayed (NOT DONE)\n"
+        "* Toggle for custom online webserver intentions to be received and displayed (NOT DONE)\n"
+        "* Draws a really big line somewhere (?)\n\n"
 
-             "Version: 0.1.003\n"
-             "Author: the lion does not concern himself with names\n"
-             "Copyright (c) 2025");
+        "Version: 0.1.003\n"
+        "Author: the lion does not concern himself with names\n"
+        "Copyright (c) 2025");
 }
 
 //The bitmap is typically a 32x32 pixel XPM image defined in your plugin's resources.
 wxBitmap* IntentionDrawer::GetPlugInBitmap() {
-    return new wxBitmap(GOOD_PLUGIN_ICON);
+    return new wxBitmap(iconArray);
 }
 
 //here ye,
@@ -142,336 +353,10 @@ wxBitmap* IntentionDrawer::GetPlugInBitmap() {
 //for the actual code,
 //this is the place to be
 
-std::vector<std::vector<std::string>> incompleteSentences;
-
-void translateAIS(std::string msg)
-{
-    // Example message: "!AIVDM,1,1,,A,83aDp0@j2d<dtdNNMQO0jgaE:tt0,0*3C"
-    std::vector<std::string> parts;
-    std::stringstream ss(msg);
-    std::string field;
-
-    // Split the message by commas
-    while (std::getline(ss, field, ',')) {
-        parts.push_back(field);
-    }
-
-    // Print parts for testing
-    // part 0: !AIVDM
-    // part 1: 1
-    // Part 2: 1
-    // Part 3:
-    // Part 4: A
-    // Part 5: 83aDp0@j2d<dtdNNMQO0jgaE:tt0
-    // Part 6: 0*3C
-    for (size_t i = 0; i < parts.size(); ++i) {
-        std::cout << "Part " << i << ": " << parts[i] << std::endl;
-    }
-    // --- Check checksum ---
-    if (!parts.empty()) {
-        // Find '*' in last part
-        size_t asteriskPos = parts.back().find('*');
-        if (asteriskPos == std::string::npos) {
-            std::cout << "No checksum found." << std::endl;
-            return; // invalid message
-        }
-
-        // Extract transmitted checksum
-        std::string checksumStr = parts.back().substr(asteriskPos + 1);
-        if (checksumStr.size() != 2)
-            return; // invalid checksum length
-
-        unsigned int transmittedChecksum = 0;
-        std::stringstream ssChecksum;
-        ssChecksum << std::hex << checksumStr;
-        ssChecksum >> transmittedChecksum;
-
-        // Calculate checksum: XOR of all characters between '!' and '*'
-        unsigned int calcChecksum = 0;
-        // reconstruct full string from first character after '!' to '*'
-        // (exclusive)
-        std::string raw = msg.substr(1, msg.find('*') - 1);
-        for (char c : raw) {
-            calcChecksum ^= static_cast<unsigned char>(c);
-        }
-
-        if (calcChecksum != transmittedChecksum) {
-            std::cout << "Checksum failed: " << std::hex << calcChecksum
-                      << " != " << transmittedChecksum << std::endl;
-            return; // invalid message
-        }
-    }
-
-    std::string payload;
-
-    // Check for segmented message
-    if (parts[1][0] != '1') { // total messages > 1
-        if (parts[2][0] < parts[1][0]) {
-            // Not the final message: store it
-            incompleteSentences.push_back(parts);
-            return;
-        }
-
-        // Final message: combine previous parts
-        for (auto it = incompleteSentences.begin();
-            it != incompleteSentences.end();) {
-            if (!it->empty() && it->at(3) == parts[3]) { // sequence ID match
-                payload += it->at(5); // append payload
-                it = incompleteSentences.erase(it); // remove after processing
-            } else {
-                ++it;
-            }
-        }
-    }
-
-    // Append current part's payload
-    payload += parts[5];
-
-    // --- Only now, check AIS type ---
-    if (payload.empty() || payload[0] != '8') {
-        return;
-    }
-
-    // std::cout << payload << std::endl;
-    std::vector<bool> bits;
-
-    // Convert payload to bits
-    for (char c : payload) {
-        int val;
-
-        // Manual AIS 6-bit mapping
-        if (c >= '0' && c <= '9')
-            val = c - '0';
-        else if (c >= ':' && c <= '@')
-            val = 10 + (c - ':');
-        else if (c >= 'A' && c <= 'W')
-            val = 17 + (c - 'A');
-        else if (c >= '`' && c <= 'w')
-            val = 40 + (c - '`');
-        else
-            continue; // skip invalid chars
-
-        // Push 6 bits (MSB first)
-        for (int i = 5; i >= 0; --i) {
-            bits.push_back((val >> i) & 1);
-        }
-    }
-
-    // adaptable function: i-(i+bitsForParam)where i is the amount of bits
-    // previous params used up
-    int FI = 0;
-    for (size_t i = 50; i < 56 && i < bits.size(); ++i) {
-        FI = (FI << 1) | bits[i];
-    }
-    if (FI != 12) {
-        return;
-    }
-
-    int mmsi = 0;
-    for (size_t i = 8; i < 38 && i < bits.size(); ++i) {
-        mmsi = (mmsi << 1) | bits[i];
-    }
-    std::cout << "MMSI: " << mmsi << std::endl;
-
-    int waypointAmt = 0;
-    for (size_t i = 78; i < 81 && i < bits.size(); ++i) {
-        waypointAmt = (waypointAmt << 1) | bits[i];
-    }
-    std::vector<WP> waypoints;
-    // read the first waypoint (separate from the rest, because it's not a Delta
-    // value) read the Longitude
-    int raw_lon = 0;
-    for (size_t i = 81; i < 108 && i < bits.size(); ++i) {
-        raw_lon = (raw_lon << 1) | bits[i];
-    }
-    // 2's complement (27 bits)
-    if (raw_lon & (1 << 26)) { // check MSB
-        raw_lon -= (1 << 27);
-    }
-    // Convert to degrees
-    double lon1 = raw_lon / 360000.0; // 1/6000 min -> deg
-    std::cout << lon1 << std::endl;
-
-    int raw_lat = 0;
-    for (size_t i = 108; i < 134 && i < bits.size(); ++i) {
-        raw_lat = (raw_lat << 1) | bits[i];
-    }
-    // 2's complement (26 bits)
-    if (raw_lat & (1 << 25)) {
-        raw_lat -= (1 << 26);
-    }
-    // Convert to degrees
-    double lat1 = raw_lat / 360000.0;
-    std::cout << lat1 << std::endl;
-
-    // read heading in degrees 0-360 (0 = north)
-    int heading = 0;
-    for (size_t i = 134; i < 143 && i < bits.size(); ++i) {
-        heading = (heading << 1) | bits[i];
-    }
-    std::cout << heading << std::endl;
-
-    // read ETA in seconds 0-4095
-    int eta_delta = 0;
-    for (size_t i = 143; i < 153 && i < bits.size(); ++i) {
-        eta_delta = (eta_delta << 1) | bits[i];
-    }
-    std::cout << eta_delta << std::endl;
-    int hours = eta_delta / 3600;
-    int minutes = (eta_delta % 3600) / 60;
-    int seconds = eta_delta % 60;
-    // TODO: make a setting whether to display remaining time or arrival time
-    // right now its remaining time
-
-    waypoints.emplace_back(lon1, lat1, heading, hours, minutes, seconds);
-
-    for (int j = 1; j < waypointAmt; j++) {
-        // calculate the bit range offset for consecutive waypoints
-        size_t offset = (j - 1) * 43;
-
-        // read the Longitude delta (12 bits)
-        int longDelta = 0;
-        for (size_t i = 153 + offset; i < 165 + offset && i < bits.size();
-            ++i) {
-            longDelta = (longDelta << 1) | bits[i];
-        }
-        if (longDelta & (1 << 11)) {
-            longDelta -= (1 << 12);
-        }
-        double lon = longDelta / 1200000.0;
-        lon += waypoints.back().lon;
-
-        // read the Latitude delta (12 bits)
-        int latDelta = 0;
-        for (size_t i = 165 + offset; i < 177 + offset && i < bits.size();
-            ++i) {
-            latDelta = (latDelta << 1) | bits[i];
-        }
-        if (latDelta & (1 << 11)) {
-            latDelta -= (1 << 12);
-        }
-        double lat = latDelta / 1200000.0;
-        lat += waypoints.back().lat;
-
-        // read heading (9 bits)
-        int hdng = 0;
-        for (size_t i = 177 + offset; i < 186 + offset && i < bits.size();
-            ++i) {
-            hdng = (hdng << 1) | bits[i];
-        }
-
-        // read ETA (10 bits)
-        int etaDelta = 0;
-        for (size_t i = 186 + offset; i < 196 + offset && i < bits.size();
-            ++i) {
-            etaDelta = (etaDelta << 1) | bits[i];
-        }
-
-        int hrs = etaDelta / 3600;
-        int mins = (etaDelta % 3600) / 60;
-        int secs = etaDelta % 60;
-        hrs += waypoints.back().hour;
-        mins += waypoints.back().minute;
-        seconds += waypoints.back().second;
-        std::cout << hrs << ":" << mins << ":" << secs << std::endl;
-
-        waypoints.emplace_back(lon, lat, hdng, hrs, mins, secs);
-    }
-}
-
-//turn degrees into radians
-inline double Deg2Rad(int deg) { return deg * PI / 180.0; }
-
-// Draw a single waypoint with heading arrow and ETA text
-//meaning, you probably dont want to use this directly. have a gander at DrawVesselDC()
-void DrawWaypointDC(wxDC& dc, PlugIn_ViewPort* vp, const WP& wp)
-{
-    wxPoint p;
-    GetCanvasPixLL(vp, &p, wp.lat, wp.lon);
-
-    // Waypoint circle
-    dc.SetPen(wxPen(*wxBLACK, 1));
-    dc.SetBrush(*wxBLUE_BRUSH);
-    dc.DrawCircle(p, 4);
-
-    // Heading arrow
-    double rad = Deg2Rad(wp.heading);
-    double len = 20.0; // pixels
-
-    wxPoint tip(p.x + len * sin(rad), p.y - len * cos(rad));
-
-    dc.SetPen(wxPen(*wxRED, 2));
-    dc.DrawLine(p, tip);
-
-    // Arrowhead
-    double arrowAngle = PI / 8; // 22.5 degrees
-    double arrowLen = 6.0;
-    wxPoint left(tip.x - arrowLen * sin(rad - arrowAngle),
-        tip.y + arrowLen * cos(rad - arrowAngle));
-    wxPoint right(tip.x - arrowLen * sin(rad + arrowAngle),
-        tip.y + arrowLen * cos(rad + arrowAngle));
-    dc.DrawLine(tip, left);
-    dc.DrawLine(tip, right);
-
-    // ETA text
-    dc.SetTextForeground(*wxWHITE);
-    dc.DrawText(wxString(wp.eta), p.x + 5, p.y - 15);
-}
-
-// Draw the route and waypoints for a single vessel
-void DrawVesselDC(wxDC& dc, PlugIn_ViewPort* vp, const Vessel& v)
-{
-    if (v.route.size() < 2)
-        return;
-
-    // Route lines
-    dc.SetPen(wxPen(v.color, 2));
-    for (size_t i = 1; i < v.route.size(); i++) {
-        wxPoint p1, p2;
-        GetCanvasPixLL(vp, &p1, v.route[i - 1].lat, v.route[i - 1].lon);
-        GetCanvasPixLL(vp, &p2, v.route[i].lat, v.route[i].lon);
-        dc.DrawLine(p1, p2);
-    }
-
-    // Draw waypoints
-    for (auto& wp : v.route) {
-        DrawWaypointDC(dc, vp, wp);
-    }
-}
-
 //do not call. automatically called by opencpn every frame
-bool IntentionDrawer::RenderOverlayMultiCanvas(wxDC& dc, PlugIn_ViewPort* vp, int canvasIndex) {
-    bool drewSomething = false;
-    DrawGiantTestLine(dc, vp); // purely visual test
-
-    for (auto& v : vessels) {
-        if (v.route.size() >= 2) {
-            //DrawVesselDC(dc, vp, v); //make it draw the B..oats
-            drewSomething = true;
-        }
-    }
-
-    return drewSomething;
-}
-
-//automatically overwrite vessel with recognised mmsi, or create new vessel at the end of array
-//expects mmsi string, vector of waypoints, wxColour colour
-void AddOrUpdateVessel(const std::string& mmsi, const std::vector<WP>& route, wxColour color) {
-    for (auto& v : vessels) {
-        if (v.mmsi == mmsi) {
-            v.route = route;
-            v.color = color;
-            RequestRefresh(GetOCPNCanvasWindow());
-            return;
-        }
-    }
-
-    vessels.push_back({ mmsi, route, color });
-    RequestRefresh(GetOCPNCanvasWindow());
-}
-
-//this is the function that receives every raw NMEA message that opencpn does
-void IntentionDrawer::SetAISSentence(wxString& sentence)
-{
-    translateAIS(sentence.ToStdString());
+bool IntentionDrawer::RenderOverlay(wxDC& dc, PlugIn_ViewPort* vp) {
+    // Draw on the chart
+    dc.SetPen(wxPen(*wxRED, 2));
+    dc.DrawLine(0, 0, vp->pix_width, vp->pix_height);
+    return true;
 }
